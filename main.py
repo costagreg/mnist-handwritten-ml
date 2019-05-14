@@ -1,83 +1,30 @@
-import gzip
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
+
+from mnist import get_test, get_train 
+from utils import hot_encoding, classification_rate, prepare_Y, prepare_X
+
 np.set_printoptions(threshold=np.inf)
 
-num_train = 60000 
-num_test = 5
+num_train = 100
+num_test = 200
 
-def get_X_train():
-  f_train = gzip.open('train-images-idx3-ubyte.gz','r')
-  image_size = 28
-  f_train.read(16)
-  buf = f_train.read(image_size * image_size * num_train)
-  data = np.frombuffer(buf, dtype=np.uint8).astype(np.float32)
-  data = data.reshape(num_train, image_size * image_size)
-  # image = data[2].reshape( image_size, image_size)
-  # print(image.shape)
-  # plt.imshow(image)
-  # plt.show()
-  return data
-
-def get_Y_train():
-  f_labels = gzip.open('train-labels-idx1-ubyte.gz','r')
-  f_labels.read(8)
-  buf = f_labels.read(num_train)
-  labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-  # print(labels[2])
-  return labels
-
-
-def get_X_test():
-  f_train = gzip.open('t10k-images-idx3-ubyte.gz','r')
-  image_size = 28
-  f_train.read(16)
-  buf = f_train.read(image_size * image_size * num_test)
-  data = np.frombuffer(buf, dtype=np.uint8).astype(np.float32)
-  data = data.reshape(num_test, image_size * image_size)
-  # image = np.asarray(data[2262]).squeeze()
-  # plt.imshow(image)
-  # plt.show()
-  return data
-
-def get_Y_test():
-  f_labels = gzip.open('t10k-labels-idx1-ubyte.gz','r')
-  f_labels.read(8)
-  buf = f_labels.read(num_test)
-  labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-  labels = labels.reshape(num_test, 1)
-  # print(labels[2262])
-  return labels
-
-def classification_rate(Y, P):
- n_correct = 0
- n_total = 0
- for i in range(len(Y)):
-   n_total += 1
-   if Y[i] == P[i]:
-     n_correct += 1
- return float(n_correct) / n_total
-
-# Get training data
-X_train = np.transpose(get_X_train())
-Y_train = np.transpose(get_Y_train())
-
-# Normalize data
-X_train = X_train/255.
-
-Y_train_E = np.eye(10)[Y_train] #hot encoding
-Y_train_E = np.transpose(Y_train_E)
+# Training data
+X_train, Y_train = get_train(num_train)
+X_train = prepare_X(X_train)
+Y_train, Y_train_E = prepare_Y(Y_train, 10)
 
 print('X_train shape ' + str(X_train.shape))
 print('Y_train shape ' + str(Y_train_E.shape))
 
-# Get test data
-X_test = get_X_test()
-Y_test = get_Y_test()
+# Test data
+X_test, Y_test = get_test(num_test)
+X_test = prepare_X(X_test)
+Y_test, Y_test_E = prepare_Y(Y_test, 10)
 
 print('X_test shape ' + str(X_test.shape))
-print('Y_test shape ' + str(Y_test.shape))
+print('Y_test shape ' + str(Y_test_E.shape))
 
 # 2 layer  NN
 
@@ -105,18 +52,17 @@ opt = tf.train.GradientDescentOptimizer(0.05).minimize(loss)
 
 saver = tf.train.Saver()
 # tf.reset_default_graph()
-imported_graph = tf.train.import_meta_graph('./my_test_model-12000.meta')
+# imported_graph = tf.train.import_meta_graph('./my_test_model-12000.meta')
 
 with tf.Session() as sess:
-  # sess.run(tf.global_variables_initializer())
-  imported_graph.restore(sess, './my_test_model-12000')
-  for i in range(12001, 100000):
+  sess.run(tf.global_variables_initializer())
+  # imported_graph.restore(sess, './my_test_model-35000')
+  for i in range(10000):
     pred, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_train, Y: Y_train_E})
     if i%1000 == 0:
-      saver.save(sess, 'my_test_model', global_step=i)
+      saver.save(sess, './tmp/batch_gradient', global_step=i)
       print(cost)
 
-  pred = np.argmax(pred, axis=0)
-  print(pred)
-  print(Y_train)
-  print(classification_rate(Y_train, pred))
+  pred_test, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
+  pred_test = np.argmax(pred_test, axis=0)
+  print(classification_rate(Y_test, pred_test))
