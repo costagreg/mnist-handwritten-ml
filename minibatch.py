@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 np.set_printoptions(threshold=np.inf)
 
-num_train = 512
+num_train = 600000
 num_test = 5
-batch_size = 128
+batch_size = 32
 
 def get_X_train():
   f_train = gzip.open('train-images-idx3-ubyte.gz','r')
