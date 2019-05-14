@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 np.set_printoptions(threshold=np.inf)
 
-num_train = 60000 
+num_train = 512
 num_test = 5
+batch_size = 128
 
 def get_X_train():
   f_train = gzip.open('train-images-idx3-ubyte.gz','r')
@@ -103,19 +104,28 @@ Y_hat = tf.nn.softmax(Z2)
 loss = tf.losses.log_loss(labels=Y, predictions=Y_hat)
 opt = tf.train.GradientDescentOptimizer(0.05).minimize(loss)
 
-saver = tf.train.Saver()
+# saver = tf.train.Saver()
 # tf.reset_default_graph()
-imported_graph = tf.train.import_meta_graph('./my_test_model-12000.meta')
+# imported_graph = tf.train.import_meta_graph('./my_test_model-12000.meta')
 
 with tf.Session() as sess:
-  # sess.run(tf.global_variables_initializer())
-  imported_graph.restore(sess, './my_test_model-12000')
-  for i in range(12001, 100000):
-    pred, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_train, Y: Y_train_E})
-    if i%1000 == 0:
-      saver.save(sess, 'my_test_model', global_step=i)
-      print(cost)
+  sess.run(tf.global_variables_initializer())
+  # imported_graph.restore(sess, './my_test_model-12000')
+  # X_train = create_batches(X_train)
+  # (num_batches, layer_1, m)
+  num_batches = int(np.ceil(X_train.shape[1]/batch_size))
+  for i in range(10000):
+    for j in range(num_batches):
+      batch_start = batch_size*j
+      batch_end = batch_size*(j+1)
+      X_batch =  X_train[:, batch_start:batch_end]
+      Y_batch =  Y_train_E[:, batch_start:batch_end]
+      pred, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_batch, Y: Y_batch })
 
+    if i%1000 == 0:
+      print(cost)
+  
+  pred, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_train, Y: Y_train_E })
   pred = np.argmax(pred, axis=0)
   print(pred)
   print(Y_train)
