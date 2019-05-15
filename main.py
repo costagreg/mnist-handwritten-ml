@@ -7,8 +7,8 @@ from utils import hot_encoding, classification_rate, prepare_Y, prepare_X
 
 np.set_printoptions(threshold=np.inf)
 
-num_train = 100
-num_test = 200
+num_train = 60000
+num_test = 10000
 
 # Training data
 X_train, Y_train = get_train(num_train)
@@ -54,12 +54,12 @@ saver = tf.train.Saver()
 # tf.reset_default_graph()
 # imported_graph = tf.train.import_meta_graph('./my_test_model-12000.meta')
 
-with tf.Session() as sess:
+with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
   sess.run(tf.global_variables_initializer())
   # imported_graph.restore(sess, './my_test_model-35000')
-  for i in range(10000):
+  for i in range(30000):
     pred, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_train, Y: Y_train_E})
-    if i%1000 == 0:
+    if i%2000 == 0:
       saver.save(sess, './tmp/batch_gradient', global_step=i)
       print(cost)
 
