@@ -50,3 +50,9 @@ def get_test(num):
   Y_test = get_Y_test(num)
 
   return X_test, Y_test
+
+if __name__ == "__main__":
+    print(get_X_train(1))
+    X = np.transpose(get_X_train(1))
+    X = X / 255.
+    print(X)

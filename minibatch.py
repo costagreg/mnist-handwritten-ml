@@ -53,15 +53,15 @@ opt = tf.train.GradientDescentOptimizer(0.05).minimize(loss)
 
 saver = tf.train.Saver()
 # tf.reset_default_graph()
-# imported_graph = tf.train.import_meta_graph('./my_test_model-12000.meta')
+imported_graph = tf.train.import_meta_graph('./tmp/mini_batch-14000.meta')
 
 with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
   sess.run(tf.global_variables_initializer())
-  # imported_graph.restore(sess, './my_test_model-12000')
+  imported_graph.restore(sess, './tmp/mini_batch-14000')
   # X_train = create_batches(X_train)
   # (num_batches, layer_1, m)
   num_batches = int(np.ceil(X_train.shape[1]/batch_size))
-  for i in range(30000):
+  for i in range(14001, 30000):
     for j in range(num_batches):
       batch_start = batch_size*j
       batch_end = batch_size*(j+1)
@@ -69,10 +69,10 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
       Y_batch =  Y_train_E[:, batch_start:batch_end]
       pred, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_batch, Y: Y_batch })
 
-    if i%2000 == 0:
+    if i%1000 == 0:
       saver.save(sess, './tmp/mini_batch', global_step=i)
-      print(cost)
-  
-  pred_test, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
-  pred_test = np.argmax(pred_test, axis=0)
-  print(classification_rate(Y_test, pred_test))
+      print('iter '+str(i))
+      print('cost '+str(cost))
+      pred_test, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
+      pred_test = np.argmax(pred_test, axis=0)
+      print('class' + str(classification_rate(Y_test, pred_test)))

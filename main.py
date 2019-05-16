@@ -52,17 +52,17 @@ opt = tf.train.GradientDescentOptimizer(0.05).minimize(loss)
 
 saver = tf.train.Saver()
 # tf.reset_default_graph()
-# imported_graph = tf.train.import_meta_graph('./my_test_model-12000.meta')
+imported_graph = tf.train.import_meta_graph('./tmp/batch_gradient-29000.meta')
 
 with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
   sess.run(tf.global_variables_initializer())
-  # imported_graph.restore(sess, './my_test_model-35000')
-  for i in range(30000):
+  imported_graph.restore(sess, './tmp/batch_gradient-29000')
+  for i in range(29001, 40000):
     pred, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_train, Y: Y_train_E})
-    if i%2000 == 0:
+    if i%1000 == 0:
       saver.save(sess, './tmp/batch_gradient', global_step=i)
-      print(cost)
-
-  pred_test, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
-  pred_test = np.argmax(pred_test, axis=0)
-  print(classification_rate(Y_test, pred_test))
+      print('iter '+str(i))
+      print('cost '+str(cost))
+      pred_test, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
+      pred_test = np.argmax(pred_test, axis=0)
+      print('class' + str(classification_rate(Y_test, pred_test)))
