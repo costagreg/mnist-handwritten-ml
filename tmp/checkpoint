@@ -1,6 +1,6 @@
-model_checkpoint_path: "mini_batch-25000"
-all_model_checkpoint_paths: "mini_batch-21000"
+model_checkpoint_path: "mini_batch-26000"
 all_model_checkpoint_paths: "mini_batch-22000"
 all_model_checkpoint_paths: "mini_batch-23000"
 all_model_checkpoint_paths: "mini_batch-24000"
 all_model_checkpoint_paths: "mini_batch-25000"
+all_model_checkpoint_paths: "mini_batch-26000"
