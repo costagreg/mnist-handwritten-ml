@@ -31,7 +31,7 @@ def ValueInvert(array):
     
     # Apply transformation to flattened array
     for i in range(flatarray.size):
-        flatarray[i] = 1 - flatarray[i]
+        flatarray[i] = 255 - flatarray[i]
         
     # Return the transformed array, with the original shape
     return flatarray.reshape(array.shape)
@@ -53,10 +53,10 @@ A1 = tf.nn.sigmoid(Z1)
 Z2 = tf.add(tf.matmul(W2, A1), b2) # [layer_3, None]
 Y_hat = tf.nn.softmax(Z2)
 
-imported_graph = tf.train.import_meta_graph('./tmp/mini_batch-23000.meta')
+imported_graph = tf.train.import_meta_graph('./tmp/mini_batch-26000.meta')
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
-imported_graph.restore(sess, './tmp/mini_batch-23000')
+imported_graph.restore(sess, './tmp/mini_batch-26000')
 
 
 app = Flask(__name__)
@@ -75,11 +75,10 @@ def recognize():
   small = cv2.resize(img, (28, 28))
   cv2.imwrite('resize.png', small)
   data = cv2.imread('resize.png', cv2.IMREAD_GRAYSCALE)
-
-  data = data.reshape(28*28, 1)/255.
-  X_1 = data
+  data = ValueInvert(data)/255.
+  X_1 = data.reshape(28 * 28, 1)
   test, pred_test = sess.run([Z2, Y_hat], feed_dict={ X: X_1 })
-  print(test)
+  # print(test)
   print(np.argmax(test, axis=0))
   return jsonify({'number':1}), 200
 

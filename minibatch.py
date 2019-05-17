@@ -57,11 +57,11 @@ imported_graph = tf.train.import_meta_graph('./tmp/mini_batch-14000.meta')
 
 with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
   sess.run(tf.global_variables_initializer())
-  imported_graph.restore(sess, './tmp/mini_batch-14000')
+  imported_graph.restore(sess, './tmp/mini_batch-26000')
   # X_train = create_batches(X_train)
   # (num_batches, layer_1, m)
   num_batches = int(np.ceil(X_train.shape[1]/batch_size))
-  for i in range(14001, 30000):
+  for i in range(26001, 50000):
     for j in range(num_batches):
       batch_start = batch_size*j
       batch_end = batch_size*(j+1)
