@@ -62,7 +62,7 @@ def get_dev():
     for filename in os.listdir(folder + '/' +str(number)):
       img = cv2.imread(os.path.join(folder, str(number), filename), cv2.IMREAD_GRAYSCALE)
       img = ValueInvert(img)
-      X.append(img)
+      X.append(img.reshape(image_size * image_size))
       Y.append(number)
   
   return np.array(X), np.array(Y)

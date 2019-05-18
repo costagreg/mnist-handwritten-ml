@@ -6,7 +6,7 @@ import base64
 import cv2
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from utilis import ValueInvert
+from utils import ValueInvert
 
 
 # path = './tmp/' 
@@ -28,27 +28,27 @@ def data_uri_to_cv2_img(uri):
 
 
 
-layer_1 = 784
-layer_2 = 20
-layer_3 = 10
+# layer_1 = 784
+# layer_2 = 20
+# layer_3 = 10
 
-W1 = tf.Variable(tf.random.normal([layer_2, layer_1]), dtype=tf.float32, name='W1')
-W2 = tf.Variable(tf.random.normal([layer_3, layer_2]), dtype=tf.float32, name='W2')
-b1 = tf.Variable(np.zeros((layer_2, 1)), dtype=tf.float32, name='b1')
-b2 = tf.Variable(np.zeros((layer_3, 1)), dtype=tf.float32, name='b2')
+# W1 = tf.Variable(tf.random.normal([layer_2, layer_1]), dtype=tf.float32, name='W1')
+# W2 = tf.Variable(tf.random.normal([layer_3, layer_2]), dtype=tf.float32, name='W2')
+# b1 = tf.Variable(np.zeros((layer_2, 1)), dtype=tf.float32, name='b1')
+# b2 = tf.Variable(np.zeros((layer_3, 1)), dtype=tf.float32, name='b2')
 
-X = tf.placeholder(tf.float32, shape=[layer_1, None ], name= 'X')
-Y = tf.placeholder(tf.float32, shape=[layer_3, None ], name= 'Y')
+# X = tf.placeholder(tf.float32, shape=[layer_1, None ], name= 'X')
+# Y = tf.placeholder(tf.float32, shape=[layer_3, None ], name= 'Y')
 
-Z1 = tf.add(tf.matmul(W1, X), b1) # [layer_2, None]
-A1 = tf.nn.sigmoid(Z1)
-Z2 = tf.add(tf.matmul(W2, A1), b2) # [layer_3, None]
-Y_hat = tf.nn.softmax(Z2)
+# Z1 = tf.add(tf.matmul(W1, X), b1) # [layer_2, None]
+# A1 = tf.nn.sigmoid(Z1)
+# Z2 = tf.add(tf.matmul(W2, A1), b2) # [layer_3, None]
+# Y_hat = tf.nn.softmax(Z2)
 
-imported_graph = tf.train.import_meta_graph('./tmp/mini_batchv3-12000.meta')
-sess = tf.Session()
-sess.run(tf.global_variables_initializer())
-imported_graph.restore(sess, './tmp/mini_batchv3-12000')
+# imported_graph = tf.train.import_meta_graph('./tmp/mini_batchv3-12000.meta')
+# sess = tf.Session()
+# sess.run(tf.global_variables_initializer())
+# imported_graph.restore(sess, './tmp/mini_batchv3-12000')
 
 
 app = Flask(__name__)
@@ -75,7 +75,6 @@ def recognize():
   print(np.argmax(test, axis=0))
   return jsonify({'number':1}), 200
 
-i = 0
 @app.route('/save_dev', methods = ['POST'])
 def save_dev():
   request_data = request.get_json()

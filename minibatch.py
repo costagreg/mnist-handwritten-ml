@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-from mnist import get_test, get_train 
+from mnist import get_test, get_train, get_dev
 from utils import hot_encoding, classification_rate, prepare_Y, prepare_X
 
 np.set_printoptions(threshold=np.inf)
@@ -26,6 +26,14 @@ Y_test, Y_test_E = prepare_Y(Y_test, 10)
 
 print('X_test shape ' + str(X_test.shape))
 print('Y_test shape ' + str(Y_test_E.shape))
+
+# Dev data
+X_dev, Y_dev = get_dev()
+X_dev = prepare_X(X_dev)
+Y_dev, Y_dev_E = prepare_Y(Y_dev, 10)
+
+print('X_dev shape ' + str(X_dev.shape))
+print('Y_dev shape ' + str(Y_dev_E.shape))
 
 # 2 layer  NN
 
@@ -53,15 +61,15 @@ opt = tf.train.GradientDescentOptimizer(0.05).minimize(loss)
 
 saver = tf.train.Saver()
 # tf.reset_default_graph()
-imported_graph = tf.train.import_meta_graph('./tmp/mini_batch-14000.meta')
+# imported_graph = tf.train.import_meta_graph('./tmp/mini_batch-14000.meta')
 
 with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
   sess.run(tf.global_variables_initializer())
-  imported_graph.restore(sess, './tmp/mini_batch-26000')
+  # imported_graph.restore(sess, './tmp/mini_batch-26000')
   # X_train = create_batches(X_train)
   # (num_batches, layer_1, m)
   num_batches = int(np.ceil(X_train.shape[1]/batch_size))
-  for i in range(26001, 50000):
+  for i in range(30000):
     for j in range(num_batches):
       batch_start = batch_size*j
       batch_end = batch_size*(j+1)
@@ -69,10 +77,14 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
       Y_batch =  Y_train_E[:, batch_start:batch_end]
       pred, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_batch, Y: Y_batch })
 
-    if i%1000 == 0:
+    if i%100 == 0:
       saver.save(sess, './tmp/mini_batch', global_step=i)
       print('iter '+str(i))
       print('cost '+str(cost))
-      pred_test, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
-      pred_test = np.argmax(pred_test, axis=0)
-      print('class' + str(classification_rate(Y_test, pred_test)))
+      pred_dev, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_dev, Y: Y_dev_E })
+      pred_dev = np.argmax(pred_dev, axis=0)
+      print('dev class ' + str(classification_rate(Y_dev, pred_dev)))
+  
+  pred_test, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
+  pred_test = np.argmax(pred_test, axis=0)
+  print('class' + str(classification_rate(Y_test, pred_test)))
