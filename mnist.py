@@ -66,8 +66,3 @@ def get_dev():
       Y.append(number)
   
   return np.array(X), np.array(Y)
-
-if __name__ == "__main__":
-   X, Y = get_dev()
-   print(X.shape)
-   print(Y.shape)

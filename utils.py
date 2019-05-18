@@ -1,4 +1,5 @@
 import numpy as np 
+import sys
 
 def hot_encoding(data, num_label):
   return np.transpose(np.eye(num_label)[data])
@@ -33,3 +34,7 @@ def ValueInvert(array):
         
     # Return the transformed array, with the original shape
     return flatarray.reshape(array.shape)
+
+def read_variable_from_batch():
+  # test_name, num_hidden_layer, learning rate
+  return str(sys.argv[1]), int(sys.argv[2]), float(sys.argv[3])
