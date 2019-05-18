@@ -22,3 +22,14 @@ def prepare_Y(data, hot_encoding_labels):
   Y_E = hot_encoding(Y, hot_encoding_labels)
 
   return Y, Y_E
+
+def ValueInvert(array):
+    # Flatten the array for looping
+    flatarray = array.flatten()
+    
+    # Apply transformation to flattened array
+    for i in range(flatarray.size):
+        flatarray[i] = 255 - flatarray[i]
+        
+    # Return the transformed array, with the original shape
+    return flatarray.reshape(array.shape)

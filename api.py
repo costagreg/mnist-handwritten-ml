@@ -6,6 +6,7 @@ import base64
 import cv2
 import matplotlib.pyplot as plt
 import tensorflow as tf
+from utilis import ValueInvert
 
 
 # path = './tmp/' 
@@ -25,16 +26,7 @@ def data_uri_to_cv2_img(uri):
 
   return img
 
-def ValueInvert(array):
-    # Flatten the array for looping
-    flatarray = array.flatten()
-    
-    # Apply transformation to flattened array
-    for i in range(flatarray.size):
-        flatarray[i] = 255 - flatarray[i]
-        
-    # Return the transformed array, with the original shape
-    return flatarray.reshape(array.shape)
+
 
 layer_1 = 784
 layer_2 = 20
@@ -53,10 +45,10 @@ A1 = tf.nn.sigmoid(Z1)
 Z2 = tf.add(tf.matmul(W2, A1), b2) # [layer_3, None]
 Y_hat = tf.nn.softmax(Z2)
 
-imported_graph = tf.train.import_meta_graph('./tmp/mini_batch-26000.meta')
+imported_graph = tf.train.import_meta_graph('./tmp/mini_batchv3-12000.meta')
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
-imported_graph.restore(sess, './tmp/mini_batch-26000')
+imported_graph.restore(sess, './tmp/mini_batchv3-12000')
 
 
 app = Flask(__name__)
@@ -76,11 +68,31 @@ def recognize():
   cv2.imwrite('resize.png', small)
   data = cv2.imread('resize.png', cv2.IMREAD_GRAYSCALE)
   data = ValueInvert(data)/255.
+  print(data)
   X_1 = data.reshape(28 * 28, 1)
   test, pred_test = sess.run([Z2, Y_hat], feed_dict={ X: X_1 })
   # print(test)
   print(np.argmax(test, axis=0))
   return jsonify({'number':1}), 200
+
+i = 0
+@app.route('/save_dev', methods = ['POST'])
+def save_dev():
+  request_data = request.get_json()
+  imgbase64 = request_data['data']
+  number = request_data['number']
+  print(number)
+  encoded_data = imgbase64.split(',')[1]
+  filename = 'canvas_image.png'
+  imgdata = base64.b64decode(encoded_data)
+  with open(filename, 'wb') as f:
+    f.write(imgdata)
+  
+  img = cv2.imread('canvas_image.png', cv2.IMREAD_GRAYSCALE)
+  small = cv2.resize(img, (28, 28))
+  cv2.imwrite('./dev_images/'+str(number)+'/'+ str(np.random.randint(0, high=100000000000000000)) +'.png', small)
+  
+  return jsonify({}), 200
 
 if __name__ == '__main__':
   app.run(port='5002')

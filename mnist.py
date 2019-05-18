@@ -1,5 +1,8 @@
 import gzip
 import numpy as np
+import cv2
+import os
+from utils import ValueInvert
 
 image_size = 28
 
@@ -51,8 +54,20 @@ def get_test(num):
 
   return X_test, Y_test
 
+def get_dev():
+  folder = 'dev_images'
+  X = []
+  Y = []
+  for number in range(0, 9):
+    for filename in os.listdir(folder + '/' +str(number)):
+      img = cv2.imread(os.path.join(folder, str(number), filename), cv2.IMREAD_GRAYSCALE)
+      img = ValueInvert(img)
+      X.append(img)
+      Y.append(number)
+  
+  return np.array(X), np.array(Y)
+
 if __name__ == "__main__":
-    print(get_X_train(1))
-    X = np.transpose(get_X_train(1))
-    X = X / 255.
-    print(X)
+   X, Y = get_dev()
+   print(X.shape)
+   print(Y.shape)
