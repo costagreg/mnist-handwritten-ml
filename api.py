@@ -29,12 +29,12 @@ def data_uri_to_cv2_img(uri):
 
 # 2 layer  NN
 
-sess = tf.Session()
-saver = tf.train.import_meta_graph('./tmp/2layers_test74-1000.meta')
-saver.restore(sess, tf.train.latest_checkpoint('./tmp/'))
-graph = tf.get_default_graph()
-X = graph.get_tensor_by_name("X:0")
-Y_hat = graph.get_tensor_by_name("Y_hat:0")
+# sess = tf.Session()
+# saver = tf.train.import_meta_graph('./tmp/2layers_test74-1000.meta')
+# saver.restore(sess, tf.train.latest_checkpoint('./tmp/'))
+# graph = tf.get_default_graph()
+# X = graph.get_tensor_by_name("X:0")
+# Y_hat = graph.get_tensor_by_name("Y_hat:0")
 
 app = Flask(__name__)
 CORS(app)
