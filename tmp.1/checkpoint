@@ -1,0 +1,6 @@
+model_checkpoint_path: "2layers_test63-9900"
+all_model_checkpoint_paths: "2layers_test63-9700"
+all_model_checkpoint_paths: "2layers_test63-9750"
+all_model_checkpoint_paths: "2layers_test63-9800"
+all_model_checkpoint_paths: "2layers_test63-9850"
+all_model_checkpoint_paths: "2layers_test63-9900"

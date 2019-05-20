@@ -95,5 +95,5 @@ with tf.Session() as sess:
       print('dev class ' + str(classification_rate(Y_dev, pred_dev)))
   
   pred_test, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
-  pred_test = np.argmax(pred_test, axis=0)
+  pred_test = np.argmax(pred_test[0][0], axis=0)
   print('class' + str(classification_rate(Y_test, pred_test)))
