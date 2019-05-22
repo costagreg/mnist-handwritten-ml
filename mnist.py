@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import os
 from utils import ValueInvert
+import matplotlib.pyplot as plt
 
 # MNIST_train_num = 60000
 # MNIST_test_num = 10000
@@ -57,7 +58,7 @@ def get_MNIST_test(num):
   return X_test, Y_test
 
 def get_CANVAS_dev():
-  folder = 'dev_images'
+  folder = 'dev_images_centered'
   X = []
   Y = []
   for number in range(0, 9):

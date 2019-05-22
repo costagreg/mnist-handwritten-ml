@@ -2,7 +2,7 @@ import numpy as np
 import sys
 
 def hot_encoding(data, num_label):
-  return np.transpose(np.eye(num_label)[data])
+  return np.eye(num_label)[data]
 
 def classification_rate(Y, P):
  n_correct = 0
@@ -14,15 +14,15 @@ def classification_rate(Y, P):
  return float(n_correct) / n_total
 
 def prepare_X(data):
-  X = np.transpose(data)
-  X = X / 255.
+  # X = np.transpose(data)
+  X = data / 255.
   return X
 
 def prepare_Y(data, hot_encoding_labels):
-  Y = np.transpose(data)
-  Y_E = hot_encoding(Y, hot_encoding_labels)
+  # Y = np.transpose(data)
+  Y_E = hot_encoding(data, hot_encoding_labels)
 
-  return Y, Y_E
+  return data, Y_E
 
 def ValueInvert(array):
     # Flatten the array for looping

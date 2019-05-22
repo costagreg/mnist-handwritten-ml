@@ -37,6 +37,19 @@ def data_uri_to_cv2_img(uri):
 # X = graph.get_tensor_by_name("X:0")
 # Y_hat = graph.get_tensor_by_name("Y_hat:0")
 
+def center_dev_images():
+  src = 'dev_images'
+  dest = 'dev_images_centered'
+
+  for number in range(0, 9):
+    for filename in os.listdir(src + '/' +str(number)):
+      img = cv2.imread(os.path.join(src, str(number), filename), cv2.IMREAD_GRAYSCALE)
+      if img is not None:
+        # img = ValueInvert(img)
+        # X.append(img.reshape(image_size * image_size))
+        # Y.append(number)
+        cv2.imwrite(os.path.join(dest, str(number), filename), center_image(img))
+
 def find_center_image(img):
   left = 0
   right = img.shape[1] - 1
@@ -49,7 +62,6 @@ def find_center_image(img):
       break
 
     for row in range(img.shape[0] - 1):
-      # print(img[row, col])
       if img[row, col] < 255 and empty_left == True:
         empty_left = False
         left = col
@@ -77,15 +89,6 @@ def find_center_image(img):
       if img[img.shape[0] - row - 1, col] < 255 and empty_bottom == True:
         empty_bottom = False
         bottom = img.shape[0] - row
-
-
-  # print('left ', str(left))
-  # print('top ', str(top))
-  # print('right ', str(right))
-  # print('bottom ', str(bottom))
-    
-  # plt.imshow(img)
-  # plt.show()
 
   return top, right, bottom, left
 
@@ -157,31 +160,7 @@ def save_dev():
 
   return jsonify({}), 200
 
-  
 if __name__ == '__main__':
-  data = cv2.imread('small.png', cv2.IMREAD_GRAYSCALE)
-  data = ValueInvert(data)
-
-  src = 'dev_images'
-  dest = 'dev_images_centered'
-
-  for number in range(0, 9):
-    for filename in os.listdir(src + '/' +str(number)):
-      img = cv2.imread(os.path.join(src, str(number), filename), cv2.IMREAD_GRAYSCALE)
-      if img is not None:
-        # img = ValueInvert(img)
-        # X.append(img.reshape(image_size * image_size))
-        # Y.append(number)
-        cv2.imwrite(os.path.join(dest, str(number), filename), center_image(img))
-
-  # img = cv2.imread(os.path.join(src, '5', '96499687945525348.png'), cv2.IMREAD_GRAYSCALE)
-  # plt.imshow(img)
-  # plt.show()
-
-  # test = center_image(img)
-  # plt.imshow(test)
-  # plt.show()
 
 
-  # app.run(port='5002')
-
+  app.run(port='5002')
