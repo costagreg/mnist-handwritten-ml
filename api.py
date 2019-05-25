@@ -7,8 +7,11 @@ import cv2
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import os
-from utils import ValueInvert
 
+from utils import ValueInvert
+# from preprocessing import preprocess
+
+np.set_printoptions(threshold=np.inf)
 
 # path = './tmp/' 
 # get_checkpoint = tf.train.latest_checkpoint(path) 
@@ -60,13 +63,13 @@ def find_center_image(img):
   for col in range(int(img.shape[1])):
     if empty_left == False and empty_right == False:
       break
-
+  # Refactor this with np.nonzero??
     for row in range(img.shape[0] - 1):
-      if img[row, col] < 255 and empty_left == True:
+      if img[row, col] > 0 and empty_left == True:
         empty_left = False
         left = col
 
-      if img[row, img.shape[1] - col - 1] < 255 and empty_right == True:
+      if img[row, img.shape[1] - col - 1] > 0 and empty_right == True:
         empty_right = False
         right = img.shape[1] - col
 
@@ -82,11 +85,11 @@ def find_center_image(img):
       break
 
     for col in range(img.shape[1] - 1):
-      if img[row, col] < 255 and empty_top == True:
+      if img[row, col] > 0 and empty_top == True:
         empty_top = False
         top = row
 
-      if img[img.shape[0] - row - 1, col] < 255 and empty_bottom == True:
+      if img[img.shape[0] - row - 1, col] > 0 and empty_bottom == True:
         empty_bottom = False
         bottom = img.shape[0] - row
 
@@ -112,6 +115,71 @@ def center_image(img):
   # plt.show()
   return dst
 
+def center_of_mass(img):
+  ret,thresh = cv2.threshold(img,127,255,0, cv2.THRESH_BINARY)
+  # plt.imshow(thresh)
+  # plt.show()
+  contours,hierarchy = cv2.findContours(thresh, 1, 2)
+  cnt = contours[0]
+  M = cv2.moments(cnt)
+  # print(M)
+  if M['m10']==0 and M['m00']==0:
+    cx = 14
+    cy = 14
+  else:
+    cx = int(M['m10']/M['m00'])
+    cy = int(M['m01']/M['m00'])
+
+  return cx, cy
+
+def normalize_image(img):
+  # plt.imshow(img)
+  # plt.show()
+  cx, cy = center_of_mass(img)
+  # print(cx,cy)
+  nimg = np.zeros((28,28), np.uint8)
+  center_x = 14
+  center_y = 14
+  left = center_x - cx
+  right = (center_x - cx) + 20
+  top = center_y - cy
+  bottom = (center_y - cy) + 20
+
+  if right > 28:
+    left = left - (right - 28)
+    right = 28
+
+
+  if bottom > 28:
+    top = top - (bottom - 28)
+    bottom = 28
+
+  if left < 0:
+    left = 0
+    right = 20
+
+  if top < 0:
+    top = 0
+    bottom = 20
+
+
+  # print(left, top, right, bottom)
+  # print(left, right, top, bottom)
+  nimg[top:bottom, left:right] = img
+  # print(nimg.shape) 
+  # print(nimg)
+  cx, cy = center_of_mass(nimg)
+  print('Test: ', cx, cy)
+  return nimg
+
+def process_image(img):
+  img = ValueInvert(img)
+  top, right, bottom, left = find_center_image(img)
+  cropped_img = img[top:bottom,left:right]
+  resize_img = cv2.resize(cropped_img, (20, 20),  interpolation = cv2.INTER_AREA)
+  normalized_img = normalize_image(resize_img)
+
+  return  ValueInvert(normalized_img)
 app = Flask(__name__)
 CORS(app)
 
@@ -134,7 +202,7 @@ def recognize():
   X_1 = center_image(data)
   # print(data)
   X_1 = data.reshape(28 * 28, 1)
-  print(X_1)
+  # print(X_1)
   pred = sess.run([Y_hat], feed_dict={ X: X_1 })
   # pred = np.argmax(pred, axis=0)
   print(pred)
@@ -161,6 +229,25 @@ def save_dev():
   return jsonify({}), 200
 
 if __name__ == '__main__':
+  src = 'dev_images'
+  dest = 'dev_images_centered_2'
 
+  for number in range(9, 10):
+    for filename in os.listdir(src + '/' +str(number)):
+      img = cv2.imread(os.path.join(src, str(number), filename), cv2.IMREAD_GRAYSCALE)
+      if img is not None:
+        print('Preprocess '+filename)
+        newimg = process_image(img)
+        cv2.imwrite(os.path.join(dest, str(number), filename), newimg)
+
+  # img = cv2.imread(os.path.join(src, '7', '28565061858175218.png'), cv2.IMREAD_GRAYSCALE)
+  # plt.imshow(img)
+  # plt.show()
+  # test = process_image(img)
+  # plt.imshow(test)
+  # plt.show()
+
+
+  # app.run(port='5002')
 
   app.run(port='5002')

@@ -58,10 +58,10 @@ def get_MNIST_test(num):
   return X_test, Y_test
 
 def get_CANVAS_dev():
-  folder = 'dev_images_centered'
+  folder = 'dev_images_centered_2'
   X = []
   Y = []
-  for number in range(0, 9):
+  for number in range(0, 10):
     for filename in os.listdir(folder + '/' +str(number)):
       img = cv2.imread(os.path.join(folder, str(number), filename), cv2.IMREAD_GRAYSCALE)
       if img is not None:
@@ -75,7 +75,7 @@ def get_CANVAS_test():
   folder = 'test_images'
   X = []
   Y = []
-  for number in range(0, 9):
+  for number in range(0, 10):
     for filename in os.listdir(folder + '/' +str(number)):
       img = cv2.imread(os.path.join(folder, str(number), filename), cv2.IMREAD_GRAYSCALE)
       if img is not None:

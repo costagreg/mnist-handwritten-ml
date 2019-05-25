@@ -96,7 +96,7 @@ with tf.Session() as sess:
       Y_batch =  Y_train_E[batch_start:batch_end,:]
       pred, cost, _ = sess.run([Z3, loss, opt], feed_dict={ X: X_batch, Y: Y_batch })
 
-    if i%200 == 0:
+    if i%500 == 0:
       saver.save(sess, './tmp/2layers_' + test_name, global_step=i)
       pred_dev = sess.run(Z3, feed_dict={ X: X_dev, Y: Y_dev_E })
       pred_dev = np.argmax(pred_dev, axis=1)
@@ -104,6 +104,12 @@ with tf.Session() as sess:
       print('---| iter '+str(i))
       print('---| cost '+str(cost))
       print('---| dev class '+str(classification_rate(Y_dev, pred_dev)))
-  pred_test, cost, _ = sess.run([Z3, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
-  pred_test = np.argmax(pred_test, axis=0)
-  print('class' + str(classification_rate(Y_test, pred_test)))
+
+    if i%2000 == 0:
+      pred_test, cost, _ = sess.run([Z3, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
+      pred_test = np.argmax(pred_test, axis=1)
+      print('---| test class' + str(classification_rate(Y_test, pred_test)))
+
+  # pred_test, cost, _ = sess.run([Z3, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
+  # pred_test = np.argmax(pred_test, axis=1)
+  # print('class' + str(classification_rate(Y_test, pred_test)))
