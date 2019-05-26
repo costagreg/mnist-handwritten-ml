@@ -2,9 +2,9 @@ import gzip
 import numpy as np
 import cv2
 import os
-from utils import ValueInvert
-import matplotlib.pyplot as plt
+from preprocess import process_image
 
+import matplotlib.pyplot as plt
 # MNIST_train_num = 60000
 # MNIST_test_num = 10000
 image_size = 28
@@ -58,29 +58,16 @@ def get_MNIST_test(num):
   return X_test, Y_test
 
 def get_CANVAS_dev():
-  folder = 'dev_images_centered_2'
+  folder = 'dev_images'
   X = []
   Y = []
   for number in range(0, 10):
     for filename in os.listdir(folder + '/' +str(number)):
       img = cv2.imread(os.path.join(folder, str(number), filename), cv2.IMREAD_GRAYSCALE)
       if img is not None:
-        img = ValueInvert(img)
+        img = process_image(img)
         X.append(img.reshape(image_size * image_size))
         Y.append(number)
   
   return np.array(X), np.array(Y)
-
-def get_CANVAS_test():
-  folder = 'test_images'
-  X = []
-  Y = []
-  for number in range(0, 10):
-    for filename in os.listdir(folder + '/' +str(number)):
-      img = cv2.imread(os.path.join(folder, str(number), filename), cv2.IMREAD_GRAYSCALE)
-      if img is not None:
-        img = ValueInvert(img)
-        X.append(img.reshape(image_size * image_size))
-        Y.append(number)
   
-  return np.array(X), np.array(Y)
