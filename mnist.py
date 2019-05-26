@@ -3,10 +3,11 @@ import numpy as np
 import cv2
 import os
 from preprocess import process_image
+from utils import unison_shuffled_copies
 
 import matplotlib.pyplot as plt
-# MNIST_train_num = 60000
-# MNIST_test_num = 10000
+MNIST_train_num = 60000
+MNIST_test_num = 10000
 image_size = 28
 
 def get_MNIST_X_train(num_train):
@@ -57,8 +58,19 @@ def get_MNIST_test(num):
 
   return X_test, Y_test
 
-def get_CANVAS_dev():
-  folder = 'dev_images'
+def get_all_MNSIT():
+  X_train, Y_train = get_MNIST_train(MNIST_train_num)
+  X_test, Y_test = get_MNIST_test(MNIST_test_num)
+
+  X = np.concatenate((X_train, X_test))
+  Y = np.concatenate((Y_train, Y_test))
+
+  X, Y = unison_shuffled_copies(X, Y)
+
+  return X, Y
+
+def get_CANVAS_dev_test():
+  folder = 'canvas_images'
   X = []
   Y = []
   for number in range(0, 10):
@@ -68,6 +80,14 @@ def get_CANVAS_dev():
         img = process_image(img)
         X.append(img.reshape(image_size * image_size))
         Y.append(number)
+
+  X, Y = unison_shuffled_copies(np.array(X), np.array(Y))
+
+  half = int(X.shape[0]/2)
+  X_dev = X[0:half,:]
+  Y_dev = Y[0:half]
+  X_test = X[half+1:,:]
+  Y_test = Y[half+1:]
   
-  return np.array(X), np.array(Y)
+  return X_dev, Y_dev, X_test, Y_test
   

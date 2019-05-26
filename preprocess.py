@@ -62,21 +62,20 @@ def find_center_image(img):
 
   return top, right, bottom, left
 
+def getBestShift(img):
+  cy,cx = ndimage.measurements.center_of_mass(img)
 
- def getBestShift(img):
-    cy,cx = ndimage.measurements.center_of_mass(img)
+  rows,cols = img.shape
+  shiftx = np.round(cols/2.0-cx).astype(int)
+  shifty = np.round(rows/2.0-cy).astype(int)
 
-    rows,cols = img.shape
-    shiftx = np.round(cols/2.0-cx).astype(int)
-    shifty = np.round(rows/2.0-cy).astype(int)
-
-    return shiftx,shifty
+  return shiftx,shifty
 
 def shift(img,sx,sy):
-    rows,cols = img.shape
-    M = np.float32([[1,0,sx],[0,1,sy]])
-    shifted = cv2.warpAffine(img,M,(cols,rows))
-    return shifted
+  rows,cols = img.shape
+  M = np.float32([[1,0,sx],[0,1,sy]])
+  shifted = cv2.warpAffine(img,M,(cols,rows))
+  return shifted
 
 
 def process_image(img):

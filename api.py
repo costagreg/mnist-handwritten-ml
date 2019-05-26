@@ -73,16 +73,16 @@ def save_dev():
   return jsonify({}), 200
 
 if __name__ == '__main__':
-  src = 'dev_images'
-  dest = 'dev_images_centered_2'
+  # src = 'dev_images'
+  # dest = 'dev_images_centered_2'
 
-  for number in range(9, 10):
-    for filename in os.listdir(src + '/' +str(number)):
-      img = cv2.imread(os.path.join(src, str(number), filename), cv2.IMREAD_GRAYSCALE)
-      if img is not None:
-        print('Preprocess '+filename)
-        newimg = process_image(img)
-        cv2.imwrite(os.path.join(dest, str(number), filename), newimg)
+  # for number in range(9, 10):
+  #   for filename in os.listdir(src + '/' +str(number)):
+  #     img = cv2.imread(os.path.join(src, str(number), filename), cv2.IMREAD_GRAYSCALE)
+  #     if img is not None:
+  #       print('Preprocess '+filename)
+  #       newimg = process_image(img)
+  #       cv2.imwrite(os.path.join(dest, str(number), filename), newimg)
 
   # img = cv2.imread(os.path.join(src, '7', '28565061858175218.png'), cv2.IMREAD_GRAYSCALE)
   # plt.imshow(img)
@@ -90,8 +90,5 @@ if __name__ == '__main__':
   # test = process_image(img)
   # plt.imshow(test)
   # plt.show()
-
-
-  # app.run(port='5002')
 
   app.run(port='5002')

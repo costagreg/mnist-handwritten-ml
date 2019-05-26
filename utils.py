@@ -7,11 +7,26 @@ def hot_encoding(data, num_label):
 def classification_rate(Y, P):
  n_correct = 0
  n_total = 0
+ misclassified = {
+   '0':0,
+   '1':0,
+   '2':0,
+   '3':0,
+   '4':0,
+   '5':0,
+   '6':0,
+   '7':0,
+   '8':0,
+   '8':0,
+   '9':0
+ }
  for i in range(len(Y)):
    n_total += 1
    if Y[i] == P[i]:
      n_correct += 1
- return float(n_correct) / n_total
+   else:
+     misclassified[str(Y[i])] += 1
+ return misclassified, float(n_correct) / n_total
 
 def prepare_X(data):
   # X = np.transpose(data)
@@ -23,6 +38,11 @@ def prepare_Y(data, hot_encoding_labels):
   Y_E = hot_encoding(data, hot_encoding_labels)
 
   return data, Y_E
+
+def unison_shuffled_copies(a, b):
+    assert len(a) == len(b)
+    p = np.random.permutation(len(a))
+    return a[p], b[p]
 
 def ValueInvert(array):
     # Flatten the array for looping

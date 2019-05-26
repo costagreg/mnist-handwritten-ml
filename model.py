@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import sys
 
-from mnist import  get_MNIST_train, get_MNIST_test, get_CANVAS_dev
+from mnist import  get_all_MNSIT, get_CANVAS_dev_test
 from utils import hot_encoding, classification_rate, prepare_Y, prepare_X, read_variable_from_batch
 
 # np.set_printoptions(threshold=np.inf)
@@ -16,22 +16,20 @@ print('Hidden_layer:' + str(hidden_layer))
 print('Learning_rate:' + str(learning_rate))
 print('---------------')
 
-num_train = 60000
-num_test = 10000
 batch_size = 128
 
 # Training data
-X_train, Y_train = get_MNIST_train(num_train)
+X_train, Y_train = get_all_MNSIT()
 X_train = prepare_X(X_train)
 Y_train, Y_train_E = prepare_Y(Y_train, 10)
 
 print('X_train shape ' + str(X_train.shape))
 print('Y_train shape ' + str(Y_train_E.shape))
-# print('Y_train ' + str(Y_train_E))
 
-# print(X_train)
+
 # Test data
-X_test, Y_test = get_MNIST_test(num_test)
+X_test, Y_test, X_dev, Y_dev  = get_CANVAS_dev_test()
+
 X_test = prepare_X(X_test)
 Y_test, Y_test_E = prepare_Y(Y_test, 10)
 
@@ -39,7 +37,6 @@ print('X_test shape ' + str(X_test.shape))
 print('Y_test shape ' + str(Y_test_E.shape))
 
 # Dev data
-X_dev, Y_dev = get_CANVAS_dev()
 X_dev = prepare_X(X_dev)
 Y_dev, Y_dev_E = prepare_Y(Y_dev, 10)
 
@@ -96,19 +93,25 @@ with tf.Session() as sess:
       Y_batch =  Y_train_E[batch_start:batch_end,:]
       pred, cost, _ = sess.run([Z3, loss, opt], feed_dict={ X: X_batch, Y: Y_batch })
 
-    if i%250 == 0:
+    if i%200 == 0:
       saver.save(sess, './tmp/2layers_' + test_name, global_step=i)
       pred_dev = sess.run(Z3, feed_dict={ X: X_dev, Y: Y_dev_E })
       pred_dev = np.argmax(pred_dev, axis=1)
+      misclassified, class_rate = classification_rate(Y_dev, pred_dev)
       print('--------------------')
       print('---| iter '+str(i))
       print('---| cost '+str(cost))
-      print('---| dev class '+str(classification_rate(Y_dev, pred_dev)))
+      print('---| dev class '+str(class_rate))
+      print('---| dev misclassified '+str(misclassified))
 
-    if i%250 == 0:
+    if i%1000 == 0:
       pred_test, cost, _ = sess.run([Z3, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
       pred_test = np.argmax(pred_test, axis=1)
-      print('---| test class' + str(classification_rate(Y_test, pred_test)))
+      misclassified, class_rate = classification_rate(Y_test, pred_test)
+      print('---| test class ' + str(class_rate))
+      print('---| test misclassified ' + str(misclassified))
+  
+
 
   # pred_test, cost, _ = sess.run([Z3, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
   # pred_test = np.argmax(pred_test, axis=1)
