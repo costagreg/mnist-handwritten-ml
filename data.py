@@ -82,13 +82,16 @@ def get_CANVAS():
 
   X, Y = unison_shuffled_copies(np.array(X), np.array(Y))
   # split data in train, dev, test set
-  m = int(X.shape[0]/3)
-  X_canvas_train = X[0:m,:]
-  Y_canvas_train = Y[0:m]
-  X_dev =  X[m:(2*m),:]
-  Y_dev =  Y[m:(2*m)]
-  X_test =  X[(2*m):(3*m),:]
-  Y_test =  Y[(2*m):(3*m)]
+  train_size = int(X.shape[0]/2)
+  dev_size = int(X.shape[0]/4)
+  test_size = dev_size
+
+  X_canvas_train = X[0:train_size,:]
+  Y_canvas_train = Y[0:train_size]
+  X_dev =  X[train_size:(train_size+dev_size),:]
+  Y_dev =  Y[train_size:(train_size+dev_size)]
+  X_test =  X[train_size+dev_size:,:]
+  Y_test =  Y[train_size+dev_size:]
 
   return X_canvas_train, Y_canvas_train, X_dev, Y_dev, X_test, Y_test
 

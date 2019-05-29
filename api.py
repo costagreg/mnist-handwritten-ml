@@ -22,7 +22,7 @@ b3 = tf.train.load_variable(get_checkpoint, 'b3')
 
 
 sess = tf.Session()
-saver = tf.train.import_meta_graph('./training_1/2layers_test800_00001-8400.meta')
+saver = tf.train.import_meta_graph('./training_1/2layers_test800_00001-8800.meta')
 saver.restore(sess, tf.train.latest_checkpoint('./training_1'))
 graph = tf.get_default_graph()
 X = graph.get_tensor_by_name("X:0")
@@ -99,6 +99,7 @@ def save_dev():
 
 @app.route('/save_training', methods = ['POST'])
 def save_training():
+  folder = './canvas_images/'
   request_data = request.get_json()
   imgbase64 = request_data['data']
   number = request_data['number']
@@ -125,10 +126,10 @@ def save_training():
   rot_4 = cv2.warpAffine(img,R_4,(cols,rows), borderMode=cv2.BORDER_CONSTANT, borderValue=[255,255,255])
  
 
-  cv2.imwrite('./canvas_image_training/'+str(number)+'/'+ str(np.random.randint(0, high=100000000000000000)) +'.png', ValueInvert(process_image(rot_1)))
-  cv2.imwrite('./canvas_image_training/'+str(number)+'/'+ str(np.random.randint(0, high=100000000000000000)) +'.png', ValueInvert(process_image(rot_2)))
-  cv2.imwrite('./canvas_image_training/'+str(number)+'/'+ str(np.random.randint(0, high=100000000000000000)) +'.png', ValueInvert(process_image(rot_3)))
-  cv2.imwrite('./canvas_image_training/'+str(number)+'/'+ str(np.random.randint(0, high=100000000000000000)) +'.png', ValueInvert(process_image(rot_4)))
+  cv2.imwrite(folder+str(number)+'/'+ str(np.random.randint(0, high=100000000000000000)) +'.png', ValueInvert(process_image(rot_1)))
+  cv2.imwrite(folder+str(number)+'/'+ str(np.random.randint(0, high=100000000000000000)) +'.png', ValueInvert(process_image(rot_2)))
+  cv2.imwrite(folder+str(number)+'/'+ str(np.random.randint(0, high=100000000000000000)) +'.png', ValueInvert(process_image(rot_3)))
+  cv2.imwrite(folder+str(number)+'/'+ str(np.random.randint(0, high=100000000000000000)) +'.png', ValueInvert(process_image(rot_4)))
   
   return jsonify({}), 200
 

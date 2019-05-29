@@ -100,7 +100,6 @@ with tf.Session() as sess:
   sess.run(tf.global_variables_initializer())
   imported_graph.restore(sess, tf.train.latest_checkpoint('./training_1'))
   graph = tf.get_default_graph()
-  X_train = create_batches(X_train)
   num_batches = int(np.ceil(X_train.shape[0]/batch_size))
   for i in range(30000):
     for j in range(num_batches):
