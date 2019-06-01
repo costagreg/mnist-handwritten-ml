@@ -1,0 +1,14 @@
+---------------
+Test name:test00
+Hidden_layer:10
+Learning_rate:0.0001
+---------------
+X_train shape (784, 60000)
+Y_train shape (10, 60000)
+X_test shape (784, 10000)
+Y_test shape (10, 10000)
+X_dev shape (784, 294)
+Y_dev shape (10, 294)
+iter 0
+cost 0.37703347
+dev class 0.1360544217687075

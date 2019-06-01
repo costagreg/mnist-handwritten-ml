@@ -94,11 +94,11 @@ opt = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
 
 saver = tf.train.Saver()
 # tf.reset_default_graph()
-imported_graph = tf.train.import_meta_graph('./training_1/2layers_test800_00001-8800.meta')
+imported_graph = tf.train.import_meta_graph('./tmp/2layers_transfering_learning-2600.meta')
 
 with tf.Session() as sess:
   sess.run(tf.global_variables_initializer())
-  imported_graph.restore(sess, tf.train.latest_checkpoint('./training_1'))
+  imported_graph.restore(sess, tf.train.latest_checkpoint('./tmp'))
   graph = tf.get_default_graph()
   num_batches = int(np.ceil(X_train.shape[0]/batch_size))
   for i in range(30000):
