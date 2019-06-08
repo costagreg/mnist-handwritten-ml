@@ -4,11 +4,11 @@ import tensorflow as tf
 import sys
 
 from data import  get_data
-from utils import unison_shuffled_copies, hot_encoding, classification_rate, prepare_Y, prepare_X, read_variable_from_batch
+from utils import classification_rate,  read_variable_from_console
 
 # np.set_printoptions(threshold=np.inf)
 # Read from comand line parameters: e.g. python3 model.py model_name hiddenLayer learningRate
-test_name, hidden_layer, learning_rate = read_variable_from_batch()
+test_name, hidden_layer, learning_rate = read_variable_from_console()
 
 print('---------------')
 print('Test name:' + test_name)
