@@ -22,8 +22,8 @@ b3 = tf.train.load_variable(get_checkpoint, 'b3')
 
 
 sess = tf.Session()
-saver = tf.train.import_meta_graph('./training_1/2layers_test800_00001-8800.meta')
-saver.restore(sess, tf.train.latest_checkpoint('./training_1'))
+saver = tf.train.import_meta_graph('./training_2/2layers_transfering_learning_2-1000.meta')
+saver.restore(sess, tf.train.latest_checkpoint('./training_2'))
 graph = tf.get_default_graph()
 X = graph.get_tensor_by_name("X:0")
 Y_hat = graph.get_tensor_by_name("Z3:0")

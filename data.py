@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import os
 from preprocess import process_image
-from utils import unison_shuffled_copies
+from utils import unison_shuffled_copies, prepare_Y, prepare_X
 
 import matplotlib.pyplot as plt
 MNIST_train_num = 60000
@@ -95,4 +95,53 @@ def get_CANVAS():
 
   return X_canvas_train, Y_canvas_train, X_dev, Y_dev, X_test, Y_test
 
-  
+def get_data(print_shape=False):
+  # Get data from MINST and CANVAS data
+  X_minst, Y_minst = get_all_MNSIT()
+  X_canvas_train, Y_canvas_train, X_dev, Y_dev, X_test, Y_test = get_CANVAS()
+
+  # Split data between train and train-dev
+  X_train = np.concatenate((X_minst, X_canvas_train))
+  Y_train = np.concatenate((Y_minst, Y_canvas_train))
+  X_train, Y_train = unison_shuffled_copies(X_train, Y_train)
+  X_train_dev = X_train[0:X_dev.shape[0],:]
+  Y_train_dev = Y_train[0:X_dev.shape[0]]
+  X_train = X_train[X_dev.shape[0]:,:]
+  Y_train = Y_train[X_dev.shape[0]:]
+
+  # Prepare training data and training-dev data
+  X_train = prepare_X(X_train)
+  Y_train, Y_train_E = prepare_Y(Y_train, 10)
+  X_train_dev = prepare_X(X_train_dev)
+  Y_train_dev, Y_train_dev_E = prepare_Y(Y_train_dev, 10)
+
+  # Prepare test data
+  X_test = prepare_X(X_test)
+  Y_test, Y_test_E = prepare_Y(Y_test, 10)
+
+  # Prepare dev data
+  X_dev = prepare_X(X_dev)
+  Y_dev, Y_dev_E = prepare_Y(Y_dev, 10)
+
+  if print_shape == True:
+    print('X_train shape ' + str(X_train.shape))
+    print('Y_train shape ' + str(Y_train_E.shape))
+    print('X_train_dev shape ' + str(X_train_dev.shape))
+    print('Y_train_dev shape ' + str(Y_train_dev_E.shape))
+    print('X_test shape ' + str(X_test.shape))
+    print('Y_test shape ' + str(Y_test_E.shape))
+
+  return {
+    'X_train': X_train,
+    'Y_train': Y_train,
+    'Y_train_E': Y_train_E,
+    'X_train_dev': X_train_dev,
+    'Y_train_dev': Y_train_dev,
+    'Y_train_dev_E': Y_train_dev_E,
+    'X_test': X_test,
+    'Y_test': Y_test,
+    'Y_test_E': Y_test_E,
+    'X_dev': X_dev,
+    'Y_dev': Y_dev,
+    'Y_dev_E': Y_dev_E
+  }

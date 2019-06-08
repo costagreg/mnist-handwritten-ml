@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import sys
 
-from data import  get_all_MNSIT, get_CANVAS
+from data import  get_data
 from utils import unison_shuffled_copies, hot_encoding, classification_rate, prepare_Y, prepare_X, read_variable_from_batch
 
 # np.set_printoptions(threshold=np.inf)
-
+# Read from comand line parameters: e.g. python3 model.py model_name hiddenLayer learningRate
 test_name, hidden_layer, learning_rate = read_variable_from_batch()
 
 print('---------------')
@@ -18,57 +18,29 @@ print('---------------')
 
 batch_size = 128
 
-X_minst, Y_minst = get_all_MNSIT()
-X_canvas_train, Y_canvas_train, X_dev, Y_dev, X_test, Y_test = get_CANVAS()
-
+# Destracture data from MINST and CANVAS
+data = get_data(print_shape=True)
 # Training data
-X_train = np.concatenate((X_minst, X_canvas_train))
-Y_train = np.concatenate((Y_minst, Y_canvas_train))
-
-X_train, Y_train = unison_shuffled_copies(X_train, Y_train)
-
-X_train_dev = X_train[0:X_dev.shape[0],:]
-Y_train_dev = Y_train[0:X_dev.shape[0]]
-
-X_train = X_train[X_dev.shape[0]:,:]
-Y_train = Y_train[X_dev.shape[0]:]
-
-X_train = prepare_X(X_train)
-Y_train, Y_train_E = prepare_Y(Y_train, 10)
-
-print('X_train shape ' + str(X_train.shape))
-print('Y_train shape ' + str(Y_train_E.shape))
-
-X_train_dev = prepare_X(X_train_dev)
-Y_train_dev, Y_train_dev_E = prepare_Y(Y_train_dev, 10)
-
-print('X_train_dev shape ' + str(X_train_dev.shape))
-print('Y_train_dev shape ' + str(Y_train_dev_E.shape))
-
-# Test data
-
-X_test = prepare_X(X_test)
-Y_test, Y_test_E = prepare_Y(Y_test, 10)
-
-print('X_test shape ' + str(X_test.shape))
-print('Y_test shape ' + str(Y_test_E.shape))
-
+X_train = data['X_train']
+Y_train = data['X_train']
+Y_train_E = data['Y_train_E']
+# Training-dev
+X_train_dev = data['X_train_dev']
+Y_train_dev = data['Y_train_dev']
+Y_train_dev_E = data['Y_train_dev_E']
 # Dev data
-X_dev = prepare_X(X_dev)
-Y_dev, Y_dev_E = prepare_Y(Y_dev, 10)
+X_dev = data['X_dev']
+Y_dev = data['Y_dev']
+Y_dev_E = data['Y_dev_E']
 
-print('X_dev shape ' + str(X_dev.shape))
-print('Y_dev shape ' + str(Y_dev_E.shape))
 
 # 2 layer  NN
-
 layer_1 = 784
 layer_2 = hidden_layer
 layer_3 = hidden_layer
 layer_4 = 10
 
 # Define weights and bias
-
 W1 = tf.Variable(tf.random.normal([layer_1, layer_2]) * np.sqrt(2/layer_1), dtype=tf.float32, name='W1')
 W2 = tf.Variable(tf.random.normal([layer_2, layer_3]) * np.sqrt(2/layer_2), dtype=tf.float32, name='W2')
 W3 = tf.Variable(tf.random.normal([layer_3, layer_4]) * np.sqrt(2/layer_3), dtype=tf.float32, name='W3')
@@ -91,14 +63,13 @@ loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y, logit
 loss = loss + 0.01 * regularizers
 
 opt = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
-
 saver = tf.train.Saver()
 # tf.reset_default_graph()
-imported_graph = tf.train.import_meta_graph('./tmp/2layers_transfering_learning-2600.meta')
+# imported_graph = tf.train.import_meta_graph('./training_2/2layers_transfering_learning_2-1000.meta')
 
 with tf.Session() as sess:
   sess.run(tf.global_variables_initializer())
-  imported_graph.restore(sess, tf.train.latest_checkpoint('./tmp'))
+  # imported_graph.restore(sess, tf.train.latest_checkpoint('./training_2'))
   graph = tf.get_default_graph()
   num_batches = int(np.ceil(X_train.shape[0]/batch_size))
   for i in range(30000):
