@@ -1,0 +1,6 @@
+model_checkpoint_path: "training-2800"
+all_model_checkpoint_paths: "training-2600"
+all_model_checkpoint_paths: "training-2650"
+all_model_checkpoint_paths: "training-2700"
+all_model_checkpoint_paths: "training-2750"
+all_model_checkpoint_paths: "training-2800"
