@@ -5,7 +5,7 @@ import sys
 
 from data import  get_data
 from utils import classification_rate,  read_variable_from_console
-
+from models import le_net_5
 # np.set_printoptions(threshold=np.inf)
 # Read from comand line parameters: e.g. python3 model.py model_name hiddenLayer learningRate
 test_name, hidden_layer, learning_rate = read_variable_from_console()
@@ -35,32 +35,8 @@ Y_dev_E = data['Y_dev_E']
 
 
 # 2 layer  NN
-layer_1 = 784
-layer_2 = hidden_layer
-layer_3 = hidden_layer
-layer_4 = 10
 
-# Define weights and bias
-W1 = tf.Variable(tf.random.normal([layer_1, layer_2]) * np.sqrt(2/layer_1), dtype=tf.float32, name='W1')
-W2 = tf.Variable(tf.random.normal([layer_2, layer_3]) * np.sqrt(2/layer_2), dtype=tf.float32, name='W2')
-W3 = tf.Variable(tf.random.normal([layer_3, layer_4]) * np.sqrt(2/layer_3), dtype=tf.float32, name='W3')
-b1 = tf.Variable(np.zeros((1, layer_2)), dtype=tf.float32, name='b1')
-b2 = tf.Variable(np.zeros((1, layer_3)), dtype=tf.float32, name='b2')
-b3 = tf.Variable(np.zeros((1, layer_4)), dtype=tf.float32, name='b3')
-
-X = tf.placeholder(tf.float32, shape=[None, layer_1], name= 'X')
-Y = tf.placeholder(tf.float32, shape=[None, layer_4], name= 'Y')
-
-Z1 = tf.add(tf.matmul(X, W1), b1, name='Z1') # [None, layer_2]
-A1 = tf.nn.relu(Z1, name='A1')
-Z2 = tf.add(tf.matmul(A1, W2), b2, name='Z2') #[None, layer_3]
-A2 = tf.nn.relu(Z2, name='A2')
-Z3 = tf.add(tf.matmul(A2, W3), b3, name='Z3') #[None, layer_4]
-
-# L2 regularization
-regularizers = tf.nn.l2_loss(W1) + tf.nn.l2_loss(W2) + tf.nn.l2_loss(W3) 
-loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y, logits=Z3))
-loss = loss + 0.01 * regularizers
+Y_hat = le_net_5(X_train, 10)
 
 opt = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
 saver = tf.train.Saver()
