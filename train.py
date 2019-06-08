@@ -35,9 +35,12 @@ Y_dev_E = data['Y_dev_E']
 
 
 # 2 layer  NN
+X = tf.placeholder(tf.float32, shape=[None, 32, 32, 1], name= 'X')
+Y = tf.placeholder(tf.float32, shape=[None, 10], name= 'Y')
 
-Y_hat = le_net_5(X_train, 10)
+Y_hat = le_net_5(X, 10)
 
+loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y, logits=Y_hat))
 opt = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
 saver = tf.train.Saver()
 # tf.reset_default_graph()
@@ -54,11 +57,11 @@ with tf.Session() as sess:
       batch_end = batch_size*(j+1)
       X_batch =  X_train[batch_start:batch_end,:]
       Y_batch =  Y_train_E[batch_start:batch_end,:]
-      pred, cost, _ = sess.run([Z3, loss, opt], feed_dict={ X: X_batch, Y: Y_batch })
+      pred, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_batch, Y: Y_batch })
 
-    if i%200 == 0:
-      saver.save(sess, './tmp/2layers_' + test_name, global_step=i)
-      pred_dev = sess.run(Z3, feed_dict={ X: X_dev, Y: Y_dev_E })
+    if i%50 == 0:
+      saver.save(sess, './' + test_name+'/training', global_step=i)
+      pred_dev = sess.run(Y_hat, feed_dict={ X: X_dev, Y: Y_dev_E })
       pred_dev = np.argmax(pred_dev, axis=1)
       misclassified, class_rate = classification_rate(Y_dev, pred_dev)
       print('--------------------')
@@ -67,13 +70,13 @@ with tf.Session() as sess:
       print('---| dev class '+str(class_rate))
       print('---| dev misclassified '+str(misclassified))
 
-    if i%1000 == 0:
-      pred_train_dev, cost, _ = sess.run([Z3, loss, opt], feed_dict={ X: X_train_dev, Y: Y_train_dev_E })
+    if i%250 == 0:
+      pred_train_dev, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_train_dev, Y: Y_train_dev_E })
       pred_train_dev = np.argmax(pred_train_dev, axis=1)
       misclassified, class_rate = classification_rate(Y_train_dev, pred_train_dev)
       print('---| train-dev class ' + str(class_rate))
       print('---| train-dev misclassified ' + str(misclassified))
   
-  pred_test, cost, _ = sess.run([Z3, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
+  pred_test, cost, _ = sess.run([Y_hat, loss, opt], feed_dict={ X: X_test, Y: Y_test_E })
   pred_test = np.argmax(pred_test, axis=1)
   print('class' + str(classification_rate(Y_test, pred_test)))

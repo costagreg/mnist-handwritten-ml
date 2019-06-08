@@ -15,7 +15,7 @@ def get_MNIST_X_train(num_train):
   f_train.read(16)
   buf = f_train.read(image_size * image_size * num_train)
   data = np.frombuffer(buf, dtype=np.uint8).astype(np.float32)
-  data = data.reshape(num_train, image_size * image_size)
+  data = data.reshape(num_train, image_size, image_size, 1)
 
   return data
 
@@ -33,7 +33,7 @@ def get_MNIST_X_test(num_test):
   f_train.read(16)
   buf = f_train.read(image_size * image_size * num_test)
   data = np.frombuffer(buf, dtype=np.uint8).astype(np.float32)
-  data = data.reshape(num_test, image_size * image_size)
+  data = data.reshape(num_test, image_size, image_size, 1)
 
   return data
 
@@ -64,6 +64,7 @@ def get_all_MNSIT():
   X = np.concatenate((X_train, X_test))
   Y = np.concatenate((Y_train, Y_test))
 
+  X = np.pad(X, ((0,0),(2,2),(2,2),(0,0)), 'constant')
   X, Y = unison_shuffled_copies(np.array(X), np.array(Y))
 
   return X, Y
@@ -77,9 +78,11 @@ def get_CANVAS():
       img = cv2.imread(os.path.join(folder, str(number), filename), cv2.IMREAD_GRAYSCALE)
       if img is not None:
         img = process_image(img)
-        X.append(img.reshape(image_size * image_size))
+        # TODO: is this reshape needed?
+        X.append(img.reshape(image_size, image_size, 1))
         Y.append(number)
 
+  X = np.pad(X, ((0,0),(2,2),(2,2),(0,0)), 'constant')
   X, Y = unison_shuffled_copies(np.array(X), np.array(Y))
   # split data in train, dev, test set
   train_size = int(X.shape[0]/2)
