@@ -2,6 +2,7 @@ import tensorflow as tf
 
 
 def le_net_5(X, output_layer):
+
     # CONV1
     C1_w = tf.Variable(tf.truncated_normal(
         shape=[5, 5, 1, 6], mean=0, stddev=.1))

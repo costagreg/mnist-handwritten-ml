@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Recognise MNIST</title>
+    <link rel="stylesheet" href="css/styles.css?v=1.0" />
+  </head>
+
+  <body>
+    <canvas
+      style="border: 2px solid red"
+      id="mainCanvas"
+      width="280"
+      height="280"
+    ></canvas>
+    <div><button onclick="clear_canvas()">Clear</button></div>
+    <div><button onclick="recognize()">Recognize</button></div>
+
+    <div id="recognized_num"></div>
+    <script src="js/scripts.js"></script>
+  </body>
+</html>
