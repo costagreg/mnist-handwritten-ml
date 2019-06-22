@@ -58,3 +58,7 @@ def ValueInvert(array):
 def read_variable_from_console():
   # test_name, num_hidden_layer, learning rate
   return str(sys.argv[1]), int(sys.argv[2]), float(sys.argv[3])
+
+def softmax(X):
+  expA = np.exp(X)
+  return expA / expA.sum(axis=1, keepdims=True)

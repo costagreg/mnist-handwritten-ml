@@ -32,6 +32,10 @@ Y_train_dev_E = data['Y_train_dev_E']
 X_dev = data['X_dev']
 Y_dev = data['Y_dev']
 Y_dev_E = data['Y_dev_E']
+# Dev data
+X_test = data['X_test']
+Y_test = data['Y_test']
+Y_test_E = data['Y_test_E']
 
 
 # 2 layer  NN
@@ -44,12 +48,12 @@ loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y, logit
 opt = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
 saver = tf.train.Saver()
 # tf.reset_default_graph()
-# imported_graph = tf.train.import_meta_graph('./training_2/2layers_transfering_learning_2-1000.meta')
+# imported_graph = tf.train.import_meta_graph('./cn_test_1/training-2800.meta')
 
 with tf.Session() as sess:
   sess.run(tf.global_variables_initializer())
-  # imported_graph.restore(sess, tf.train.latest_checkpoint('./training_2'))
-  graph = tf.get_default_graph()
+  # imported_graph.restore(sess, tf.train.latest_checkpoint('./cn_test_1'))
+  # graph = tf.get_default_graph()
   num_batches = int(np.ceil(X_train.shape[0]/batch_size))
   for i in range(30000):
     for j in range(num_batches):

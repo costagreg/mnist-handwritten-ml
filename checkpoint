@@ -1,6 +1,0 @@
-model_checkpoint_path: "my_test_model-45000"
-all_model_checkpoint_paths: "my_test_model-41000"
-all_model_checkpoint_paths: "my_test_model-42000"
-all_model_checkpoint_paths: "my_test_model-43000"
-all_model_checkpoint_paths: "my_test_model-44000"
-all_model_checkpoint_paths: "my_test_model-45000"

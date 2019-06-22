@@ -9,24 +9,26 @@ import tensorflow as tf
 import os
 import cv2
 
-from utils import ValueInvert
+from utils import ValueInvert, softmax
 
-path = './training_1/' 
+path = './cn_test_1/' 
 get_checkpoint = tf.train.latest_checkpoint(path) 
-W1 = tf.train.load_variable(get_checkpoint, 'W1')
-W2 = tf.train.load_variable(get_checkpoint, 'W2')
-W3 = tf.train.load_variable(get_checkpoint, 'W3')
-b1 = tf.train.load_variable(get_checkpoint, 'b1')
-b2 = tf.train.load_variable(get_checkpoint, 'b2')
-b3 = tf.train.load_variable(get_checkpoint, 'b3')
+# W1 = tf.train.load_variable(get_checkpoint, 'W1')
+# W2 = tf.train.load_variable(get_checkpoint, 'W2')
+# W3 = tf.train.load_variable(get_checkpoint, 'W3')
+# b1 = tf.train.load_variable(get_checkpoint, 'b1')
+# b2 = tf.train.load_variable(get_checkpoint, 'b2')
+# b3 = tf.train.load_variable(get_checkpoint, 'b3')
 
 
 sess = tf.Session()
-saver = tf.train.import_meta_graph('./training_2/2layers_transfering_learning_2-1000.meta')
-saver.restore(sess, tf.train.latest_checkpoint('./training_2'))
+saver = tf.train.import_meta_graph('./cn_test_1/training-2800.meta')
+saver.restore(sess, tf.train.latest_checkpoint('./cn_test_1'))
 graph = tf.get_default_graph()
+# for op in tf.get_default_graph().get_operations():
+#     print(str(op.name))
 X = graph.get_tensor_by_name("X:0")
-Y_hat = graph.get_tensor_by_name("Z3:0")
+Y_hat = graph.get_tensor_by_name("MatMul_2:0")
 
 app = Flask(__name__)
 CORS(app)
@@ -69,12 +71,15 @@ def recognize():
   
   img = cv2.imread('canvas_image.png', cv2.IMREAD_GRAYSCALE)
   img = process_image(img)
-  img = img.reshape(1, 28 * 28)/255.
+  img = img.reshape(1, 28, 28, 1)/255.
+  img = np.pad(img, ((0,0),(2,2),(2,2),(0,0)), 'constant')
   print(img)
   # print(str(pred_dev))
   pred = sess.run(Y_hat, feed_dict={ X: img })
-  print(pred)
-  pred = np.argmax(pred, axis=1)
+  # softmax = sess.run(tf.contrib.layers.softmax(logits=pred[0]))
+  pred_softmax = pred/pred.sum(axis=1, keepdims=True)
+  print(pred_softmax)
+  pred = np.argmax(pred_softmax, axis=1)
   print(pred)
   return jsonify({'number': int(pred[0])}), 200
 
