@@ -22,7 +22,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/recognize', methods=['POST'])
+@app.route('/raecognize', methods=['POST'])
 def recognize():
     request_data = request.get_json()
     imgbase64 = request_data['data']
