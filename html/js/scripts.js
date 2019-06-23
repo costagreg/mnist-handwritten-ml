@@ -67,4 +67,5 @@ const clear_canvas = () => {
   ctx.rect(0, 0, 280, 280);
   ctx.fillStyle = "white";
   ctx.fill();
+  document.getElementById("recognized_num").innerHTML = "";
 };

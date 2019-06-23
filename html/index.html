@@ -8,16 +8,11 @@
   </head>
 
   <body>
-    <canvas
-      style="border: 2px solid red"
-      id="mainCanvas"
-      width="280"
-      height="280"
-    ></canvas>
-    <div><button onclick="clear_canvas()">Clear</button></div>
-    <div><button onclick="recognize()">Recognize</button></div>
-
-    <div id="recognized_num"></div>
+    <div id="container">
+      <canvas id="mainCanvas" width="280" height="280"></canvas>
+      <div><button onclick="clear_canvas()">Clear</button></div>
+      <div id="recognized_num"></div>
+    </div>
     <script src="js/scripts.js"></script>
   </body>
 </html>
